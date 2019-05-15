@@ -10,4 +10,5 @@ type MainController struct {
 
 func (c *MainController) Get() {
 	c.TplName = "home.html"
+	c.Data["Title"] = "首页"
 }
