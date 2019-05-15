@@ -5,3 +5,4 @@
 *.swap
 beego-blog
 /static/uploads
+/conf/
