@@ -33,5 +33,4 @@ type Topic struct {
 func RegisterDB()  {
 	orm.RegisterModel(new(Category), new(Topic))
 	orm.RegisterDataBase("default",beego.AppConfig.String("db_driver"),beego.AppConfig.String("db_connection"),10)
-
 }
