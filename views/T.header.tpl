@@ -9,7 +9,6 @@
 	<title>{{ .Title}} - marunのbeego博客</title>
 	<link rel="shortcu icon" href="/static/img/favicon.jpg">
 	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://demo.laravel-admin.org/vendor/laravel-admin/AdminLTE/dist/css/AdminLTE.min.css">
 </head>
 <body>
 <script src="/static/js/jquery.js"></script>
