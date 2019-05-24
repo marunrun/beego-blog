@@ -16,7 +16,7 @@ func (this *LoginController) Get(){
 	// 解析 flash 闪存的数据
 	_ = beego.ReadFromRequest(&this.Controller)
 
-	this.TplName = "login.html"
+	this.TplName = "admin/login.html"
 	this.Data["Title"] = "后台登录"
 	this.Data["xsrfdata"]=template.HTML(this.XSRFFormHTML())
 }
@@ -65,5 +65,6 @@ func (this *LoginController) Post() {
 	}
 
 	this.SetSession("uid",admin.Id)
+	this.SetSession("name",admin.Username)
 	this.Redirect("/admin",302)
 }

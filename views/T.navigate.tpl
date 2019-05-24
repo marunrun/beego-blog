@@ -12,7 +12,6 @@
         </div>
         <nav id="bs-navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/" >首页</a></li>
                 <li><a href="/category">分类</a></li>
                 <li><a href="/topic">文章</a></li>
             </ul>

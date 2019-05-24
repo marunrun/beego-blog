@@ -3,6 +3,7 @@ package models
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"strings"
 	"time"
@@ -29,8 +30,10 @@ func (this *Admin) GetByName(username string) *Admin {
 
 // 检查密码是否正确
 func (this *Admin) CheckPwd (pwd string) bool {
+	fmt.Println(this.Encode(pwd))
 	return strings.EqualFold(this.Encode(pwd),this.Password)
 }
+
 
 // 加密密码
 func (this *Admin) Encode(pwd string) string {
