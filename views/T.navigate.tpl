@@ -16,6 +16,12 @@
                 <li><a href="/topic">文章</a></li>
             </ul>
 
+            <ul class="nav navbar-nav navbar-right">
+                {{if .IsLogin}}
+                <li><a href="/admin" >管理后台</a></li>
+                {{end}}
+            </ul>
+
         </nav>
     </div>
     <!-- jQuery 2.1.4 -->

@@ -10,5 +10,6 @@ func init() {
 	beego.Router("/admin/login", &controllers.LoginController{})
 	beego.Router("/admin", &controllers.AdminController{})
 	beego.Router("/admin/logout",&controllers.AdminController{},"post:Logout")
-	beego.Router("/admin/user",&controllers.AdminController{},"get:Change")
+	beego.Router("/admin/user",&controllers.AdminController{},"get:User;put:ChangePwd")
+	beego.Router("/admin/category",&controllers.CategoryController{})
 }

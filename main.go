@@ -4,9 +4,9 @@ import (
 	"beego-blog/models"
 	_ "beego-blog/routers"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/astaxie/beego/context"
 )
 
 func init()  {

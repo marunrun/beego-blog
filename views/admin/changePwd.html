@@ -1,3 +1,78 @@
-<form action="">
-    <input type="text" name="原密码" id="">
+{{ template "navigate" .}}
+<form class="form-horizontal">
+	<div class="form-group">
+		<label class="col-sm-2 control-label" for="old_pwd">原始密码</label>
+		<div class="col-sm-3">
+			<input type="text" class="form-control" id="old_pwd" placeholder="请输入原始密码">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="new_pwd" class="col-sm-2 control-label">新的密码</label>
+		<div class="col-sm-3">
+			<input type="password" class="form-control" id="new_pwd" placeholder="新的密码">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="confirm_pwd" class="col-sm-2 control-label">再次输入</label>
+		<div class="col-sm-3">
+			<input type="password" class="form-control" id="confirm_pwd" placeholder="请确定密码">
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-2">
+			<button type="button" onclick="ChangePwd()" class="btn btn-sm btn-success">确认提交</button>
+		</div>
+	</div>
 </form>
+
+<script type="text/javascript">
+    function ChangePwd(e) {
+		old_pwd = $("#old_pwd").val().trim();
+		new_pwd = $("#new_pwd").val().trim();
+		confirm_pwd = $("#confirm_pwd").val().trim();
+		if (old_pwd == ''){
+		    layer.msg("请输入原始密码",{icon:2});
+			return
+		}
+        if (new_pwd == '') {
+            layer.msg("请输入新密码",{icon:2});
+            return
+        }
+
+        if (confirm_pwd == '') {
+            layer.msg("请确认密码",{icon:2});
+            return
+        }
+        if (new_pwd != confirm_pwd) {
+            layer.msg("两次输入密码不一致",{icon:2});
+            return
+		}
+
+        
+
+        $.ajax({
+			type:"PUT",
+			url:"/admin/user",
+			data: {
+			    "old_pwd" : old_pwd,
+				"new_pwd" : new_pwd
+			},
+			dateType: "json",
+			headers: {"X-Xsrftoken": {{.xsrftoken}} },
+			success: function (data) {
+				if (data.code != 0){
+				    layer.msg(data.msg,{icon:2});
+					return
+				}
+				layer.msg(data.msg,{icon:1,time:2000,end: function () {
+						location.href = "admin/login"
+                    }});
+            },
+			error : function () {
+				location.reload()
+            }
+		})
+
+    }
+
+</script>
