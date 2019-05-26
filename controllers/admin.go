@@ -16,13 +16,16 @@ type res struct {
 	Msg string `json:"msg"`
 }
 
-
+// 后台首页GET
 func (this *AdminController) Get() {
 	this.TplName = "admin/category.html"
 	this.Data["Title"] = "首页"
 	this.Data["xsrfdata"]=template.HTML(this.XSRFFormHTML())
+	this.Data["xsrftoken"] = template.HTML(this.XSRFToken())
+
 }
 
+// 退出登陆
 func (this *AdminController) Logout() {
 	this.DelSession("uid")
 	this.DelSession("name")
@@ -31,12 +34,14 @@ func (this *AdminController) Logout() {
 	this.ServeJSON()
 }
 
+// 修改密码的页面 GET 请求
 func (this *AdminController) User() {
 	this.TplName = "admin/changePwd.html"
 	this.Data["Title"] = "修改密码"
 	this.Data["xsrftoken"] = template.HTML(this.XSRFToken())
 }
 
+// 修改密码 PUT 请求
 func (this *AdminController) ChangePwd() {
 	// 获取当前登陆的用户id
 	uid := this.GetSession("uid")

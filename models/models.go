@@ -7,16 +7,17 @@ import (
 )
 
 type Category struct {
-	Id              int64
-	Title           string
-	Created         time.Time `orm:"auto_now_add;index"`
-	Views           int64     `orm:"index"`
-	TopicCount      int64
+	Id         int64
+	Title      string
+	Created    time.Time `orm:"auto_now_add;index"`
+	Views      int64     `orm:"index"`
+	TopicCount int64
+	Topics      []*Topic `orm:"reverse(many)"`
 }
 
 type Topic struct {
-	Id              int64
-	Uid             int64
+	Id              uint
+	Category        *Category `orm:"column(category_id);rel(fk)"`
 	Title           string
 	Content         string `orm:"size(5000)"`
 	Attachment      string
@@ -26,10 +27,10 @@ type Topic struct {
 	Author          string
 	ReplyTime       time.Time
 	ReplyCount      int64
-	ReplyLastUserId int64
+	ReplyLastUserId int
 }
 
-func RegisterDB()  {
+func RegisterDB() {
 	orm.RegisterModel(new(Category), new(Topic), new(Admin))
-	orm.RegisterDataBase("default",beego.AppConfig.String("db_driver"),beego.AppConfig.String("db_connection"),10)
+	orm.RegisterDataBase("default", beego.AppConfig.String("db_driver"), beego.AppConfig.String("db_connection"), 10)
 }

@@ -3,15 +3,71 @@
 <div class="panel panel-default">
 	<!-- Default panel contents -->
 	<div class="panel-heading">分类管理 - 列表</div>
+	<div class="panel-heading">
+		<button class="btn btn-primary btn-sm" onclick="CateAdd()">添加分类</button>
+	</div>
 	<!-- Table -->
-	<table class="table">
-		<th>
-			<td>ID</td>
-			<td>名称</td>
-			<td>浏览次数</td>
-			<td>文章总数</td>
-			<td>创建时间</td>
-		</th>
-
+	<table class="table table-striped">
+		<tr>
+			<th>ID</th>
+			<th>名称</th>
+			<th>浏览次数</th>
+			<th>文章总数</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+		{{range .categorys}}
+			<tr>
+				<td>{{.Id}}</td>
+				<td>{{.Title}}</td>
+				<td>{{.Views}}</td>
+				<td>{{.TopicCount}}</td>
+				<td> {{date .Created "Y-m-d H:i:s"}}</td>
+			</tr>
+		{{end}}
 	</table>
 </div>
+
+<script>
+    function CateAdd() {
+        layer.prompt({
+            shadeClose: true,
+            title: '添加新的分类',
+            maxlength: 15,
+            area: ['800px', '350px'] //自定义文本域宽高
+        }, function (value, index, elem) {
+            if (value.trim() == "") {
+                layer.msg("请输入正确的名称", {icon: 2});
+                return false;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/admin/category",
+                data: {"title": value.trim()},
+                dataType: "json",
+                headers: {"X-Xsrftoken": {{.xsrftoken}} },
+                success: function (data) {
+                    if (data.code != 0) {
+                        layer.msg(data.msg, {
+                            icon: 2, time: 2000, end: function () {
+                                location.reload()
+                            }
+                        })
+                    }
+                    layer.msg(data.msg, {
+                        icon: 1, time: 2000, end: function () {
+                            location.reload()
+                        }
+                    })
+                },
+                error: function (data) {
+                    layer.msg(data.msg, {
+                        icon: 2, time: 2000, end: function () {
+                            location.reload()
+                        }
+                    })
+                }
+            });
+        });
+    }
+</script>
