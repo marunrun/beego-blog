@@ -7,10 +7,10 @@
 		<button class="btn btn-primary btn-sm" onclick="CateAdd()">添加分类</button>
 	</div>
 	<!-- Table -->
-	<table class="table table-striped">
+	<table class="table table-striped text-center">
 		<tr>
 			<th>ID</th>
-			<th>名称</th>
+			<th>分类名称</th>
 			<th>浏览次数</th>
 			<th>文章总数</th>
 			<th>创建时间</th>
@@ -23,12 +23,20 @@
 				<td>{{.Views}}</td>
 				<td>{{.TopicCount}}</td>
 				<td> {{date .Created "Y-m-d H:i:s"}}</td>
+				<td>
+					<button class="btn  btn-default margin-r-5" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></button>
+					<button class="btn  btn-default margin-r-5" title="删除" onclick="CateDelete({{.Id }})"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></button>
+				</td>
 			</tr>
 		{{end}}
 	</table>
+	<div style="float: right" class="no-margin no-padding">
+		{{ .pageHtml }}
+	</div>
 </div>
 
 <script>
+	// 添加分类
     function CateAdd() {
         layer.prompt({
             shadeClose: true,
@@ -55,7 +63,7 @@
                         })
                     }
                     layer.msg(data.msg, {
-                        icon: 1, time: 2000, end: function () {
+                        icon: 1, time: 1000, end: function () {
                             location.reload()
                         }
                     })
@@ -70,4 +78,40 @@
             });
         });
     }
+
+    // 删除分类
+	function CateDelete(id) {
+        layer.confirm('确定要删除吗?', {icon: 3}, function(index){
+            //do something
+            console.log(id);
+            $.ajax({
+                type: "DELETE",
+                url: "/admin/category?id="+id,
+                dataType: "json",
+                headers: {"X-Xsrftoken": {{.xsrftoken}} },
+                success: function (data) {
+                    if (data.code != 0) {
+                        layer.msg(data.msg, {
+                            icon: 2, time: 2000, end: function () {
+                                location.reload()
+                            }
+                        })
+                    }
+                    layer.msg(data.msg, {
+                        icon: 1, time: 1000, end: function () {
+                            location.reload()
+                        }
+                    })
+                },
+                error: function (data) {
+                    layer.msg(data.msg, {
+                        icon: 2, time: 2000, end: function () {
+                            location.reload()
+                        }
+                    })
+                }
+            });
+        });
+    }
+    
 </script>

@@ -7,7 +7,7 @@ import (
 )
 
 type Category struct {
-	Id         int64
+	Id         int
 	Title      string
 	Created    time.Time `orm:"auto_now_add;index"`
 	Views      int64     `orm:"index"`
