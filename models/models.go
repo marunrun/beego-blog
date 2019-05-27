@@ -30,7 +30,17 @@ type Topic struct {
 	ReplyLastUserId int
 }
 
+
 func RegisterDB() {
 	orm.RegisterModel(new(Category), new(Topic), new(Admin))
 	orm.RegisterDataBase("default", beego.AppConfig.String("db_driver"), beego.AppConfig.String("db_connection"), 10)
+}
+
+func GetAllCategory() ([]Category) {
+	o := orm.NewOrm()
+
+	var categorys []Category
+	o.QueryTable(new(Category)).All(&categorys)
+
+	return categorys
 }

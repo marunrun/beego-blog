@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"beego-blog/models"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"github.com/astaxie/beego/validation"
 	"html/template"
@@ -18,7 +19,7 @@ type res struct {
 
 // 后台首页GET
 func (this *AdminController) Get() {
-	this.TplName = "admin/category.html"
+	this.TplName = "admin/home.html"
 	this.Data["Title"] = "首页"
 	this.Data["xsrfdata"]=template.HTML(this.XSRFFormHTML())
 	this.Data["xsrftoken"] = template.HTML(this.XSRFToken())
@@ -91,4 +92,9 @@ func (this *AdminController) ChangePwd() {
 	this.Data["json"] = res{0,"修改成功"}
 	this.ServeJSON()
 	return
+}
+
+func (this *AdminController) Upload() {
+	params := this.Input()
+	fmt.Println(params)
 }

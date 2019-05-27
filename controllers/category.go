@@ -33,10 +33,11 @@ func (this *CategoryController) Get() {
 	this.Data["xsrftoken"] = template.HTML(this.XSRFToken())
 	var list []models.Category
 	o := orm.NewOrm()
-	o.QueryTable(new(models.Category)).OrderBy("Created").Limit(1).Offset(1*(page -1)).All(&list)
+	o.QueryTable(new(models.Category)).OrderBy("Created").Limit(1).Offset(1 * (page - 1)).All(&list)
+
 	total, _ := o.QueryTable(new(models.Category)).Count()
 
-	pageHtml := this.paginate(page,total,1)
+	pageHtml := this.paginate(page, total, 1)
 	this.Data["pageHtml"] = template.HTML(pageHtml)
 	this.Data["categorys"] = list
 }
@@ -86,3 +87,27 @@ func (this *CategoryController) Delete() {
 	return
 }
 
+// 更新分类
+func (this *CategoryController) Put() {
+	params := this.Input()
+	id, err := strconv.Atoi(params.Get("id"))
+	if err != nil {
+		this.Data["json"] = res{400, err.Error()}
+		this.ServeJSON()
+		return
+	}
+
+	o := orm.NewOrm()
+	category := models.Category{Id:id,Title:params.Get("title")}
+
+	_, err = o.Update(&category, "Title")
+	if err != nil {
+		this.Data["json"] = res{400, err.Error()}
+		this.ServeJSON()
+		return
+	}
+
+	this.Data["json"] = res{0, "修改成功"}
+	this.ServeJSON()
+	return
+}

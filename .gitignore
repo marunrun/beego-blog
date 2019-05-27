@@ -6,3 +6,4 @@
 beego-blog
 /static/uploads
 /conf/
+*.tmp
