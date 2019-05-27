@@ -40,7 +40,7 @@ func GetAllCategory() ([]Category) {
 	o := orm.NewOrm()
 
 	var categorys []Category
-	o.QueryTable(new(Category)).All(&categorys)
+	o.QueryTable(new(Category)).Limit(100000).All(&categorys)
 
 	return categorys
 }
