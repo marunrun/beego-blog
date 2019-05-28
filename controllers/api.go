@@ -59,7 +59,7 @@ func (this *ApiController) Upload() {
 		this.ReadCsv(fullPath)
 	case ".xlsx",".xls":
 		//this.ReadExcel(fullPath)
-		this.ReadXlsx(fullPath)
+		this.ReadXslx(fullPath)
 	default:
 		panic("文件有误")
 	}
@@ -193,7 +193,7 @@ func (this *ApiController) writeToCSV() {
 }
 
 // 使用excelize读取excel
-func (this *ApiController) ReadToXslx(filePath string) {
+func (this *ApiController) ReadXslx(filePath string) {
 	f, err := excelize.OpenFile(filePath)
 	if err != nil {
 		panic(err)
