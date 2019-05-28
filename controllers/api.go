@@ -1,15 +1,19 @@
 package controllers
 
 import (
+	"beego-blog/libs"
 	"beego-blog/models"
 	"encoding/csv"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/astaxie/beego"
 	"github.com/tealeg/xlsx"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,21 +27,48 @@ func (this *ApiController) URLMapping() {
 
 // @router /api/upload [post]
 func (this *ApiController) Upload() {
-	params := this.Input()
-	fmt.Println(params)
 	f, h, err := this.GetFile("file")
 	if err != nil {
 		log.Fatal("getfile err ", err)
+		panic(err)
 	}
 	defer f.Close()
 
-	this.SaveToFile("file", "static/uploads/"+h.Filename)
+	// 文件路径
+	fullPath := "static/uploads/" + h.Filename
+	// 保存文件
+	err = this.SaveToFile("file", fullPath)
+	if err != nil {
+		log.Fatal("savefile err ", err)
+		panic(err)
+	}
 
+	// 获取文件后缀
+	ext := filepath.Ext(fullPath)
+	// 判断文件是否是需要的
+	arr := []interface{}{".xlsx", ".xls", ".csv"}
+	if !libs.In_array(ext, arr) {
+		os.Remove(fullPath)
+		this.Data["json"] = res{400, "请上传xlsx，xls或csv文件"}
+		this.ServeJSON()
+		return
+	}
+
+	switch ext {
+	case ".csv":
+		this.ReadCsv(fullPath)
+	case ".xlsx",".xls":
+		//this.ReadExcel(fullPath)
+		this.ReadXlsx(fullPath)
+	default:
+		panic("文件有误")
+	}
+
+	this.ServeJSON()
 }
 
 // @router /down [get]
 func (this *ApiController) Down() {
-
 	this.writeToCSV()
 
 	defer os.Remove("static/uploads/test.csv")
@@ -47,6 +78,7 @@ func (this *ApiController) Down() {
 	//this.Ctx.Output.Download("static/uploads/MyXLSXFile.xlsx")
 }
 
+// 使用excelize导出excel
 func (thi *ApiController) WriteToXslx() {
 	f := excelize.NewFile()
 	// 创建一个工作表
@@ -66,7 +98,6 @@ func (thi *ApiController) WriteToXslx() {
 		f.SetCellValue("Sheet1", "C"+strconv.Itoa(key+2), value.Created.Format("2006-01-02 15:04:05"))
 		f.SetCellValue("Sheet1", "D"+strconv.Itoa(key+2), value.Views)
 		f.SetCellValue("Sheet1", "E"+strconv.Itoa(key+2), value.TopicCount)
-
 	}
 
 	// 设置工作簿的默认工作表
@@ -78,9 +109,8 @@ func (thi *ApiController) WriteToXslx() {
 		fmt.Println(err)
 	}
 	fmt.Println(time.Now().String(), "处理完成")
-
 }
-
+// 使用tealeg/xlsx导出excel
 func (this *ApiController) WriteToExcel() {
 	var file *xlsx.File
 	var sheet *xlsx.Sheet
@@ -129,7 +159,7 @@ func (this *ApiController) WriteToExcel() {
 
 	//columns := []string{"Id", "分类名称", "创建时间", "浏览次数", "文章数量"}
 }
-
+// 导出csv
 func (this *ApiController) writeToCSV() {
 	columns := []string{"Id", "分类名称", "创建时间", "浏览次数", "文章数量"}
 
@@ -160,4 +190,46 @@ func (this *ApiController) writeToCSV() {
 
 	w.Flush()
 	fmt.Println("处理完毕：", time.Now().String())
+}
+
+// 使用excelize读取excel
+func (this *ApiController) ReadToXslx(filePath string) {
+	f, err := excelize.OpenFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	// 获取 Sheet1 上所有单元格
+	rows, err := f.GetRows("Sheet1")
+	for _, row := range rows {
+		for _, colCell := range row {
+			fmt.Print(colCell, "\t")
+		}
+		fmt.Println()
+	}
+
+}
+// 使用tealeg/xlsx读取excel
+func (this *ApiController) ReadExcel(filePath string) {
+	xlFile, err := xlsx.OpenFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	for _, sheet := range xlFile.Sheets {
+		for _, row := range sheet.Rows {
+			for _, cell := range row.Cells {
+				text := cell.String()
+				fmt.Printf("%s\n", text)
+			}
+		}
+	}
+}
+// 读取csv文件
+func (this *ApiController) ReadCsv(filePath string) {
+	conent, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	r2 := csv.NewReader(strings.NewReader(string(conent)))
+	ss,_ := r2.ReadAll()
+	fmt.Println(ss)
 }
